@@ -62,7 +62,8 @@ class StoreControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index with no products should render without errors" do
-    # Remove all products
+    # Remove all products (delete line items first due to foreign key constraint)
+    LineItem.delete_all
     Product.delete_all
     
     get store_index_url
@@ -72,7 +73,8 @@ class StoreControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index with single product should render correctly" do
-    # Keep only one product
+    # Keep only one product (delete line items first due to foreign key constraint)
+    LineItem.delete_all
     Product.where.not(id: products(:ruby).id).delete_all
     
     get store_index_url
@@ -91,6 +93,8 @@ class StoreControllerTest < ActionDispatch::IntegrationTest
 
   test "products should be ordered alphabetically" do
     # Create test products with specific titles using existing image
+    # Delete line items first due to foreign key constraint
+    LineItem.delete_all
     Product.delete_all
     Product.create!(
       title: "Zebra Book",
